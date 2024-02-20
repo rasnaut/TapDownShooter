@@ -12,8 +12,7 @@ public class PlayerAiming : CharacterAiming
   private Camera _mainCamera;     // Главная камера
 
   //Переопределили метод Init()
-  public override void Init()
-  {
+  protected override void Init() {
     _mainCamera    = Camera.main;                                 // Присваиваем _mainCamera объект камеры
     _aimTransform  = FindAnyObjectByType<PlayerAim>().transform;  // Находим объект типа PlayerAim Записываем его трансформу в _aimTransform
     _rigBuilder    = GetComponentInChildren<RigBuilder>();        // Получаем RigBuilder из дочерних объектов Записываем его в переменную _rigBuilder
@@ -32,7 +31,8 @@ public class PlayerAiming : CharacterAiming
   }
 
   void FixedUpdate() {
-    Aiming(); // Поворачиваем героя для прицела
+    if (!IsActive) { return; } // Если герой не активен Выходим из метода
+    Aiming();                  // Поворачиваем героя для прицела
   }
 
   private void Aiming()

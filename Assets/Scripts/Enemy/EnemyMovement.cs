@@ -14,8 +14,7 @@ public class EnemyMovement : CharacterMovement
   private Transform _playerTransform; // Трансформа главного героя Враги будут бежать в его позицию
   private Vector3 _prevPosition;      // Предыдущая позиция врага
 
-  public override void Init()
-  {
+  protected override void Init() {
     _animator     = GetComponentInChildren<Animator>(); // Присваиваем _animator компонент Animator из дочерних объектов
     _navMeshAgent = GetComponent<NavMeshAgent>();       // Присваиваем _navMeshAgent компонент NavMeshAgent
 
@@ -24,16 +23,22 @@ public class EnemyMovement : CharacterMovement
     _prevPosition    = transform.position;                      // Присваиваем _prevPosition текущую позицию врага
   }
 
-  private void Update()
-  {
+  protected override void Stop() {
+    _navMeshAgent.enabled = false; // Отключаем навигационный агент
+    RefreshAnimation();            // Обновляем анимацию врага
+  }
+
+  private void Update() {
+    if (!IsActive) { // Если враг не активен
+      return;        // Выходим из метода
+    }
     SetTargetPosition(_playerTransform.position); // Устанавливаем целевую позицию врага
     RefreshAnimation();                           // Обновляем анимацию врага
   }
 
   private void SetTargetPosition(Vector3 position) { _navMeshAgent.SetDestination(position); } // Устанавливаем целевую позицию врага
 
-  private void RefreshAnimation()
-  {
+  private void RefreshAnimation() {
     Vector3 curPosition = transform.position;          // Получаем текущую позицию врага
     Vector3 deltaMove   = curPosition - _prevPosition; // Вычисляем разницу между текущей и предыдущей позицией
 

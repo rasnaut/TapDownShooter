@@ -32,11 +32,24 @@ public class BulletController : MonoBehaviour
   private void Move() { transform.position += transform.forward * _speed * Time.deltaTime; }
 
   private void Hit(RaycastHit hit) {
+    CheckCharacterHit(hit); // Проверяем попадание в персонажа
+    
     // Создаём эффект попадания на месте столкновения пули
     Instantiate(_hitPrefab, hit.point, Quaternion.LookRotation(-transform.up, -transform.forward));
     DestroyBullet(); // Пуля пропадает с экрана
   }
 
-  // Убираем объект пули
-  private void DestroyBullet() { Destroy(gameObject); }
+  private void DestroyBullet() { Destroy(gameObject); } // Убираем объект пули
+
+  private void CheckCharacterHit(RaycastHit hit)
+  {
+    // Получаем компонент CharacterHealth
+    CharacterHealth hittedHealth = hit.collider.GetComponentInChildren<CharacterHealth>(); // У персонажа, в которого попала пуля
+
+    // Если такой компонент есть
+    if (hittedHealth) {                      // То есть пуля попала в персонажа
+      int damage = 10;                       // Задаём урон от пули;
+      hittedHealth.AddHealthPoints(-damage); // Уменьшаем количество здоровья персонажа
+    }
+  }
 }

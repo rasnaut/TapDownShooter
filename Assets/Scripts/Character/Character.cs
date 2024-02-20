@@ -2,33 +2,35 @@
 
 public abstract class Character : MonoBehaviour
 {
-  private CharacterMovement _movement; // Движение персонажа
-  private CharacterAiming   _aiming;   // Прицеливание персонажа
   private CharacterPart[]   _parts;    // Части персонажа
-  private CharacterShooting _shooting; // Стрельба персонажа
-
-  // Start is called before the first frame update
-  void Start()
-  {
+  
+  void Start() {
     Init(); // Вызываем метод Init()
   }
 
-  private void Init()
-  {
-    _movement = GetComponent<CharacterMovement>(); // Получаем компонент движения персонажа
-    _aiming   = GetComponent<CharacterAiming>  (); // Получаем компонент прицеливания персонажа
-    _shooting = GetComponent<CharacterShooting>(); // Получаем компонент стрельбы персонажа
-
-    _parts = new CharacterPart[] { // Создаём новый массив частей персонажа
-        _movement,                 // Элемент массива «Движение»
-        _aiming  ,                 // Элемент массива «Прицеливание»
-        _shooting                  // Элемент массива «Стрельба»
-    };
-
+  private void Init() {
+    _parts = GetComponents<CharacterPart>();
     for (int i = 0; i < _parts.Length; i++) { // Проходим по всем элементам массива
       if (_parts[i]) {                        // Проверяем, существует ли текущий элемент
-        _parts[i].Init();                     // Вызываем метод Init() для текущего элемента
+        _parts[i].BaseInit();                 // Вызываем метод Init() для текущего элемента
       }
+    }
+    InitDeath(); // Вызываем метод InitDeath()
+  }
+
+  private void InitDeath() {
+    for (int i = 0; i < _parts.Length; i++) // Проходим по всем частям
+    {
+      // Если часть — экземпляр класса CharacterHealth
+      if (_parts[i] is CharacterHealth health) { // Подписываемся на событие OnDie объекта health
+        health.OnDie += Stop;                    // Указываем, что при возникновении события должен выполниться метод Stop()
+      }
+    }
+  }
+
+  private void Stop() {
+    for (int i = 0; i < _parts.Length; i++) { // Проходим по всем частям
+      _parts[i].BaseStop();                       // Вызываем метод Stop() для каждой части
     }
   }
 }

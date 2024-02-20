@@ -8,17 +8,18 @@ public class PlayerShooting : CharacterShooting
   private Transform _bulletSpawnPoint; // Точка появления пули
   private float     _bulletTimer;      // Счётчик времени между выстрелами
 
-  public override void Init()
+  protected override void Init()
   {
     _bulletSpawnPoint = GetComponentInChildren<BulletSpawnPoint>().transform; // Получаем компонент Transform для точки вылета пули
     _bulletTimer = 0;                                                         // Обнуляем таймер выстрела
   }
 
-  private void Update() { Shooting(); } // Обрабатываем выстрел игрока
+  private void Update() {
+    if (!IsActive) { return; } // Если герой не активен Выходим из метода
+    Shooting();                // Обрабатываем выстрел игрока
+  } 
 
-  private void Shooting()
-  {
-    
+  private void Shooting() {
     if (Input.GetMouseButton(0)) // Если нажата левая кнопка мыши
     {
       _bulletTimer += Time.deltaTime; // Увеличиваем таймер выстрела На время, прошедшее с предыдущего кадра

@@ -23,7 +23,7 @@ public class PlayerMovement : CharacterMovement
   private bool  _isJumping;      // Флаг того, что герой в прыжке
   private float _jumpTimer;      // Таймер длительности прыжка
 
-  public override void Init() // Переопределили метод Init()
+  protected override void Init() // Переопределили метод Init()
   {
     _animator            = GetComponentInChildren<Animator>();
     _characterController = GetComponent<CharacterController>();
@@ -32,11 +32,11 @@ public class PlayerMovement : CharacterMovement
     _groundCheckBox = new Vector3(_characterController.radius, 0.0001f, _characterController.radius);
   }
 
-  void FixedUpdate()
-  {
-    Gravity();  // Применяем к герою гравитацию
-    Movement(); // Двигаем героя клавишами
-    Jumping();  // Управляем прыжком героя
+  void FixedUpdate() {
+    Gravity();                 // Применяем к герою гравитацию
+    if (!IsActive) { return; } // Если герой не активен Выходим из метода
+    Movement();                // Двигаем героя клавишами
+    Jumping();                 // Управляем прыжком героя
   }
 
   private void Gravity()
